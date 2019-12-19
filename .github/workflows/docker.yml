@@ -14,11 +14,18 @@ jobs:
         openssl req -new -text -passout pass:abcd -subj /CN=localhost -out server.req -keyout privkey.pem
         openssl rsa -in privkey.pem -passin pass:abcd -out server.key
         openssl req -x509 -in server.req -text -key server.key -out server.crt
-    - name: Publish to Registry
+    - name: Publish to GitHub Packages
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: fantix/postgres-ssl-docker/postgres
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
+        tag_names: true
+    - name: Publish to Docker Hub
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: fantix/postgres-ssl
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
         tag_names: true
