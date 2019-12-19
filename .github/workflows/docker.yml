@@ -1,0 +1,24 @@
+name: docker
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@master
+    - name: Generate SSL certificates for PostgreSQL
+      run: |
+        openssl req -new -text -passout pass:abcd -subj /CN=localhost -out server.req -keyout privkey.pem
+        openssl rsa -in privkey.pem -passin pass:abcd -out server.key
+        openssl req -x509 -in server.req -text -key server.key -out server.crt
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: fantix/postgres-ssl-docker/postgres
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        tag_names: true
