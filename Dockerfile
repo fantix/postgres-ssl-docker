@@ -1,4 +1,4 @@
-FROM postgres:9.6-alpine
+FROM postgres:10.15-alpine
 COPY server.key /var/lib/postgresql/server.key
 COPY server.crt /var/lib/postgresql/server.crt
 RUN chown postgres /var/lib/postgresql/server.key && \
